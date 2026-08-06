@@ -1,15 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:mundomagico_wiki/providers/characters_provider.dart';
 import 'package:mundomagico_wiki/screens/characters_menu_screen.dart';
 import 'package:mundomagico_wiki/screens/main_menu_screen.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => CharactersProvider()..loadCharacters(),
+          child: const CharacterListScreen(),
+        )
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -25,6 +36,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const MainMenuScreen(),
         '/characters': (context) => const CharacterListScreen(),
+        '/character-detail': (context)=> const CharacterListScreen()
       },
     );
   }

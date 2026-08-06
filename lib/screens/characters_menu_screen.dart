@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mundomagico_wiki/widgets/CharacterTile.dart';
+import 'package:provider/provider.dart';
 
-import '../ data/characters_repository.dart';
-import '../models/character.dart';
+import 'package:mundomagico_wiki/widgets/CharacterTile.dart';
+import '../providers/characters_provider.dart';
 import '../widgets/BottomNavigationBar.dart';
 
 class CharacterListScreen extends StatefulWidget {
@@ -13,15 +13,7 @@ class CharacterListScreen extends StatefulWidget {
 }
 
 class _CharacterListScreenState extends State<CharacterListScreen> {
-  String _searchQuery = "";
-  late Future<List<Character>> _charactersFuture;
   final TextEditingController _searchController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    _charactersFuture = const CharactersRepository().loadCharacters();
-  }
 
   @override
   void dispose() {
@@ -31,75 +23,85 @@ class _CharacterListScreenState extends State<CharacterListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final provider = context.watch<CharactersProvider>();
+
     return Scaffold(
-      appBar: AppBar(title: Text("Characters")),
-      bottomNavigationBar: Bottomnavigationbar(currentIndex: 2),
+      appBar: AppBar(title: const Text("Characters")),
+      bottomNavigationBar: const Bottomnavigationbar(currentIndex: 2),
       body: Column(
         children: [
-          Row(
-            children: [
-              const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Text("Search: "),
-              ),
-              Expanded(
-                child: TextField(
-                  controller: _searchController,
-                  decoration: const InputDecoration(
-                    hintText: "Nombre...",
-                    prefixIcon: Icon(Icons.search),
-                  ),
-                  onChanged: (value) {
-                    setState(() => _searchQuery = value.toLowerCase());
-                  },
-                ),
-              ),
-              if (_searchQuery.isNotEmpty)
-                IconButton(
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                hintText: "Nombre...",
+                prefixIcon: const Icon(Icons.search),
+                suffixIcon: provider.searchQuery.isEmpty
+                    ? null
+                    : IconButton(
                   icon: const Icon(Icons.clear),
                   onPressed: () {
-                    setState(() {
-                      _searchQuery = "";
-                      _searchController.clear();
-                    });
+                    _searchController.clear();
+                    context.read<CharactersProvider>().clearSearch();
                   },
                 ),
-            ],
-          ),
-          Expanded(
-            child: FutureBuilder<List<Character>>(
-              future: _charactersFuture,
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  return Center(
-                    child: Text(
-                      'Error loading characters: ${snapshot.error}',
-                    ),
-                  );
-                }
-                if (!snapshot.hasData) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                final characters = snapshot.data!.where((character) {
-                  return character.name.toLowerCase().contains(_searchQuery);
-                }).toList();
-
-                if (characters.isEmpty) {
-                  return const Center(child: Text("No characters found"));
-                }
-
-                return ListView.builder(
-                  itemCount: characters.length,
-                  itemBuilder: (context, index) {
-                    final character = characters[index];
-                    return CharacterTile(character: character);
-                  },
-                );
-              },
+              ),
+              onChanged: context.read<CharactersProvider>().search,
             ),
           ),
+          Expanded(child: _buildBody(provider)),
         ],
       ),
     );
+  }
+
+  Widget _buildBody(CharactersProvider provider) {
+    switch (provider.status) {
+      case CharactersStatus.loading:
+        return const Center(child: CircularProgressIndicator());
+
+      case CharactersStatus.error:
+        return Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Error loading characters: ${provider.errorMessage}',
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 12),
+                FilledButton(
+                  onPressed: context.read<CharactersProvider>().loadCharacters,
+                  child: const Text("Reintentar"),
+                ),
+              ],
+            ),
+          ),
+        );
+
+      case CharactersStatus.ready:
+        final characters = provider.characters;
+
+        if (characters.isEmpty) {
+          return const Center(child: Text("No characters found"));
+        }
+
+        return RefreshIndicator(
+          onRefresh: context.read<CharactersProvider>().loadCharacters,
+          child: ListView.builder(
+            itemCount: characters.length,
+            itemBuilder: (context, index) {
+              final character = characters[index];
+              return CharacterTile(
+                key: ValueKey(character.name),
+                character: character,
+              );
+            },
+          ),
+        );
+    }
   }
 }
