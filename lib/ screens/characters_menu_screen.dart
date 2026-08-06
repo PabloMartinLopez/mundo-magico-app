@@ -1,10 +1,35 @@
 import 'package:flutter/material.dart';
 
-class CharactersMenuScreen extends StatelessWidget {
-  const CharactersMenuScreen({super.key});
+import '../ data/characters_repository.dart';
+import '../models/character.dart';
+
+class CharacterListScreen extends StatelessWidget {
+  const CharacterListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      body: FutureBuilder<List<Character>>(
+        future: const CharactersRepository().loadCharacters(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(child: Text('Error al cargar personajes: ${snapshot.error}'));
+          }
+          if (!snapshot.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          final characters = snapshot.data!;
+          return ListView.builder(
+            itemCount: characters.length,
+            itemBuilder: (context, index) {
+              final character = characters[index];
+              return ListTile(
+                title: Text(character.name),
+              );
+            },
+          );
+        },
+      ),
+    );
   }
 }

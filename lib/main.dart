@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const MainMenuScreen(),
-        '/characters':(context) => const CharactersMenuScreen()
+        '/characters':(context) => const CharacterListScreen()
       },
     );
   }
