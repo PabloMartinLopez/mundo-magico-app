@@ -3,6 +3,7 @@ import 'package:mundomagico_wiki/widgets/CharacterTile.dart';
 
 import '../ data/characters_repository.dart';
 import '../models/character.dart';
+import '../widgets/BottomNavigationBar.dart';
 
 class CharacterListScreen extends StatelessWidget {
   const CharacterListScreen({super.key});
@@ -13,6 +14,7 @@ class CharacterListScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text("Characters"),
       ),
+      bottomNavigationBar: Bottomnavigationbar(currentIndex: 2,),
       body: FutureBuilder<List<Character>>(
         future: const CharactersRepository().loadCharacters(),
         builder: (context, snapshot) {
