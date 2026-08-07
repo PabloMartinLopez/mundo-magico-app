@@ -1,4 +1,4 @@
-import 'Wand.dart';
+import 'wand.dart';
 
 class Character {
   final String id;
