@@ -11,7 +11,7 @@ class CharacterException implements Exception {
 }
 
 class CharacterService {
-  static const String _baseUrl = 'https://hp-api.onrender.com/api';
+  static const String _baseUrl = 'https://hp-api-ten.vercel.app/api/es';
 
   final http.Client _client;
 
