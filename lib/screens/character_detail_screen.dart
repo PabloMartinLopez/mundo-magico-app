@@ -32,6 +32,13 @@ class CharacterDetailScreen extends StatelessWidget {
             },
           ),
           _Section(
+            title: 'Biografía',
+            rows: {
+              'Biografía': character.biography,
+              'Biografía-spoiler': character.biographyFull,
+            },
+          ),
+          _Section(
             title: 'Apariencia',
             rows: {
               'Ojos': character.eyeColour,
@@ -227,13 +234,6 @@ class _Header extends StatelessWidget {
                 character.name,
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                '${character.species}, ${character.gender}',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).textTheme.bodySmall?.color,
                 ),
               ),
               const SizedBox(height: 12),
