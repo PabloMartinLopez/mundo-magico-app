@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:mundomagico_wiki/models/character.dart';
 import 'package:mundomagico_wiki/providers/character_provider.dart';
+import 'package:mundomagico_wiki/providers/color_provider.dart';
 import 'package:provider/provider.dart';
 
 import '../screens/character_detail_screen.dart';
+import '../theme/MagicPatternBackground.dart';
 
 class CharacterTile extends StatelessWidget {
   final Character character;
@@ -15,6 +17,7 @@ class CharacterTile extends StatelessWidget {
     return ListTile(
       onTap: () {
         CharacterProvider(character);
+        context.read<ColorProvider>().changeColor(MagicAccents.of(character.house));
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (_) => ChangeNotifierProvider(

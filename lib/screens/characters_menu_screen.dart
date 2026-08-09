@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 
 import 'package:mundomagico_wiki/widgets/CharacterTile.dart';
 import '../providers/characters_provider.dart';
+import '../providers/color_provider.dart';
+import '../theme/MagicPatternBackground.dart';
 import '../widgets/BottomNavigationBar.dart';
 
 class CharacterListScreen extends StatefulWidget {
@@ -25,33 +27,36 @@ class _CharacterListScreenState extends State<CharacterListScreen> {
   Widget build(BuildContext context) {
     final provider = context.watch<CharactersProvider>();
 
-    return Scaffold(
-      appBar: AppBar(title: const Text("Characters")),
-      bottomNavigationBar: const Bottomnavigationbar(currentIndex: 2),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: "Nombre...",
-                prefixIcon: const Icon(Icons.search),
-                suffixIcon: provider.searchQuery.isEmpty
-                    ? null
-                    : IconButton(
-                  icon: const Icon(Icons.clear),
-                  onPressed: () {
-                    _searchController.clear();
-                    context.read<CharactersProvider>().clearSearch();
-                  },
+    return MagicPatternBackground(
+      accent: context.watch<ColorProvider>().color,
+      child: Scaffold(
+        appBar: AppBar(title: const Text("Characters")),
+        bottomNavigationBar: const Bottomnavigationbar(currentIndex: 2),
+        body: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  hintText: "Nombre...",
+                  prefixIcon: const Icon(Icons.search),
+                  suffixIcon: provider.searchQuery.isEmpty
+                      ? null
+                      : IconButton(
+                          icon: const Icon(Icons.clear),
+                          onPressed: () {
+                            _searchController.clear();
+                            context.read<CharactersProvider>().clearSearch();
+                          },
+                        ),
                 ),
+                onChanged: context.read<CharactersProvider>().search,
               ),
-              onChanged: context.read<CharactersProvider>().search,
             ),
-          ),
-          Expanded(child: _buildBody(provider)),
-        ],
+            Expanded(child: _buildBody(provider)),
+          ],
+        ),
       ),
     );
   }

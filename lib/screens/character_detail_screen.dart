@@ -3,6 +3,7 @@ import 'package:mundomagico_wiki/models/character.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/character_provider.dart';
+import '../theme/MagicPatternBackground.dart';
 
 class CharacterDetailScreen extends StatelessWidget {
   const CharacterDetailScreen({super.key});
@@ -11,56 +12,66 @@ class CharacterDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final character = context.watch<CharacterProvider>().character;
 
-    return Scaffold(
-      appBar: AppBar(title: Text(character.name)),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          _Header(character: character),
-          const SizedBox(height: 16),
-          _StatusChips(character: character),
-          _Section(
-            title: 'Datos personales',
-            rows: {
-              'Especie': character.species,
-              'Género': character.gender,
-              'Ascendencia': character.ancestry,
-              'Nacimiento': character.dateOfBirth,
-              'Año': character.yearOfBirth == 0
-                  ? ''
-                  : '${character.yearOfBirth}',
-            },
-          ),
-          _Section(
-            title: 'Biografía',
-            rows: {
-              'Biografía': character.biography,
-              'Biografía-spoiler': character.biographyFull,
-            },
-          ),
-          _Section(
-            title: 'Apariencia',
-            rows: {
-              'Ojos': character.eyeColour,
-              'Pelo': character.hairColour,
-              'Patronus': character.patronus,
-            },
-          ),
-          _Section(
-            title: 'Varita',
-            rows: {
-              'Madera': character.wand.wood,
-              'Núcleo': character.wand.core,
-              'Longitud': character.wand.length == null
-                  ? ''
-                  : '${character.wand.length}"',
-            },
-          ),
-          _Section(title: 'Reparto', rows: {'Actor': character.actor}),
-          _ChipList(title: 'Otros nombres', values: character.alternateNames),
-          _ChipList(title: 'Otros actores', values: character.alternateActors),
-          const SizedBox(height: 24),
-        ],
+    return MagicPatternBackground(
+      accent: MagicAccents.of(character.house),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          title: Text(character.name),
+          backgroundColor: Colors.transparent,
+        ),
+        body: ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            _Header(character: character),
+            const SizedBox(height: 16),
+            _StatusChips(character: character),
+            _Section(
+              title: 'Datos personales',
+              rows: {
+                'Especie': character.species,
+                'Género': character.gender,
+                'Ascendencia': character.ancestry,
+                'Nacimiento': character.dateOfBirth,
+                'Año': character.yearOfBirth == 0
+                    ? ''
+                    : '${character.yearOfBirth}',
+              },
+            ),
+            _Section(
+              title: 'Biografía',
+              rows: {
+                'Biografía': character.biography,
+                'Biografía-spoiler': character.biographyFull,
+              },
+            ),
+            _Section(
+              title: 'Apariencia',
+              rows: {
+                'Ojos': character.eyeColour,
+                'Pelo': character.hairColour,
+                'Patronus': character.patronus,
+              },
+            ),
+            _Section(
+              title: 'Varita',
+              rows: {
+                'Madera': character.wand.wood,
+                'Núcleo': character.wand.core,
+                'Longitud': character.wand.length == null
+                    ? ''
+                    : '${character.wand.length}"',
+              },
+            ),
+            _Section(title: 'Reparto', rows: {'Actor': character.actor}),
+            _ChipList(title: 'Otros nombres', values: character.alternateNames),
+            _ChipList(
+              title: 'Otros actores',
+              values: character.alternateActors,
+            ),
+            const SizedBox(height: 24),
+          ],
+        ),
       ),
     );
   }
@@ -160,6 +171,7 @@ class _ChipList extends StatelessWidget {
 
 class _StatusChips extends StatelessWidget {
   final Character character;
+
   const _StatusChips({required this.character});
 
   @override
