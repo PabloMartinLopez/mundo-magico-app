@@ -1,9 +1,11 @@
-import 'Wand.dart';
+import 'wand.dart';
 
 class Character {
   final String id;
   final String name;
   final List<String> alternateNames;
+  final String biography;
+  final String biographyFull;
   final String species;
   final String gender;
   final String house;
@@ -26,6 +28,8 @@ class Character {
     required this.id,
     required this.name,
     required this.alternateNames,
+    required this.biography,
+    required this.biographyFull,
     required this.species,
     required this.gender,
     required this.house,
@@ -50,6 +54,8 @@ class Character {
       id: json['id'] as String,
       name: json['name'] as String,
       alternateNames: List<String>.from(json['alternate_names'] as List),
+      biography: json['biography'] as String,
+      biographyFull: json['biographyFull'] as String,
       species: json['species'] as String,
       gender: json['gender'] as String,
       house: json['house'] as String,
