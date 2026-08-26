@@ -21,6 +21,10 @@ class MainMenuScreen extends StatelessWidget {
               title: Text("Characters"),
               onTap: () => Navigator.pushNamed(context, '/characters'),
             ),
+            ListTile(
+              title: Text("Opciones"),
+              onTap: () => Navigator.pushNamed(context, '/options'),
+            )
           ],
         ),
       ),

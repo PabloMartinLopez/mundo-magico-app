@@ -7,11 +7,12 @@ enum CharactersStatus { loading, ready, error }
 class CharactersProvider extends ChangeNotifier {
   final CharacterService _service;
 
-  CharactersProvider({CharacterService? service})
+  CharactersProvider({CharacterService? service, this._lang = 'en'})
       : _service = service ?? CharacterService();
 
   List<Character> _all = [];
   String _searchQuery = '';
+  String _lang;
   CharactersStatus _status = CharactersStatus.loading;
   String? _errorMessage;
 
@@ -26,13 +27,19 @@ class CharactersProvider extends ChangeNotifier {
         .toList(growable: false);
   }
 
+  void updateLanguage(String lang) {
+    if (_lang == lang) return;
+    _lang = lang;
+    loadCharacters();
+  }
+
   Future<void> loadCharacters() async {
     _status = CharactersStatus.loading;
     _errorMessage = null;
     notifyListeners();
 
     try {
-      _all = await _service.fetchCharacters();
+      _all = await _service.fetchCharacters(_lang);
       _status = CharactersStatus.ready;
     } on CharacterException catch (e) {
       _all = [];

@@ -11,23 +11,24 @@ class CharacterException implements Exception {
 }
 
 class CharacterService {
-  static const String _baseUrl = 'https://hp-api-ten.vercel.app/api/es';
+  static const String _baseUrl = 'https://hp-api-ten.vercel.app/api';
 
   final http.Client _client;
 
+
   CharacterService({http.Client? client}) : _client = client ?? http.Client();
 
-  Future<List<Character>> fetchCharacters() =>
-      _getList(Uri.parse('$_baseUrl/characters'));
+  Future<List<Character>> fetchCharacters(String lang) =>
+      _getList(Uri.parse('$_baseUrl/$lang/characters'));
 
-  Future<List<Character>> fetchStudents() =>
-      _getList(Uri.parse('$_baseUrl/characters/students'));
+  Future<List<Character>> fetchStudents(String lang) =>
+      _getList(Uri.parse('$_baseUrl/$lang/characters/students'));
 
-  Future<List<Character>> fetchStaff() =>
-      _getList(Uri.parse('$_baseUrl/characters/staff'));
+  Future<List<Character>> fetchStaff(String lang) =>
+      _getList(Uri.parse('$_baseUrl/$lang/characters/staff'));
 
-  Future<List<Character>> fetchByHouse(String house) =>
-      _getList(Uri.parse('$_baseUrl/house/${house.toLowerCase()}'));
+  Future<List<Character>> fetchByHouse(String lang, String house) =>
+      _getList(Uri.parse('$_baseUrl/$lang/house/${house.toLowerCase()}'));
 
   Future<List<Character>> _getList(Uri uri) async {
     try {
